@@ -6,7 +6,7 @@ User registration and management library using MongoEngine
 State
 -----
 
-*Planning*
+*Early development*
 
 
 Core features
