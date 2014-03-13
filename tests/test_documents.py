@@ -34,6 +34,7 @@ def db(User):
     connect(db='test_regme')
     User.drop_collection()
     yield
+    User.drop_collection()
 
 
 @pytest.fixture
@@ -89,3 +90,17 @@ def test_user_activation_due(user):
     activation_due_gt = now + timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
     activation_due_lt = activation_due_gt - timedelta(days=1)
     assert activation_due_lt < user.activation_due < activation_due_gt
+
+
+def test_user_login(user_data, user):
+    from django.contrib.auth import authenticate, login
+    from django.http.request import HttpRequest
+    from django.contrib.sessions.backends.cache import SessionStore
+    assert user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
+    request = HttpRequest()
+    request.session = SessionStore()
+    user = authenticate(
+        username=user_data['username'],
+        password=user_data['password'])
+    login(request, user)
+    assert user.is_authenticated()
