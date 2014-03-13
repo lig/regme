@@ -1,5 +1,10 @@
+import sys
+
 from django.conf import settings
 import pytest
+
+
+sys.path[0:0] = ['']
 
 
 @pytest.fixture(scope='session')
