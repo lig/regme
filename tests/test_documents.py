@@ -57,23 +57,30 @@ def test_create_inactive_user(user, User):
 
 
 def test_user_activate_deactivate(user):
-    user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
+    assert user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
     assert user.is_active
     assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
-    user.deactivate()
+    assert user.deactivate()
     assert not user.is_active
 
 
 def test_user_activate_fail(user):
-    user.activate('')
+    assert not user.activate('')
     assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
     assert not user.is_active
+
+
+def test_user_already_activated(user):
+    assert user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
+    assert user.is_active
+    assert not user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
+    assert user.is_active
 
 
 def test_user_activation_expired(user):
     user.activation_due = datetime.utcnow() - timedelta(days=1)
     user.save()
-    user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
+    assert not user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
     assert not user.is_active
 
 

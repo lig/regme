@@ -31,16 +31,20 @@ class User(BaseUser):
                 days=settings.ACCOUNT_ACTIVATION_DAYS))
         if save:
             self.save()
+        return True
 
     def activate(self, activation_key, save=True):
 
         if self.activation_key != activation_key:
-            return
+            return False
         if self.activation_due < datetime.utcnow():
-            return
+            return False
+        if self.is_active:
+            return False
 
         self.is_active = True
         if save:
             self.save()
+        return True
 
 pre_save.connect(User.ensure_inactive, User)
