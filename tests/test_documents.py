@@ -42,14 +42,31 @@ def user_data():
         'email': 'email@example.com'}
 
 
-def test_create_inactive_user(db, User, user_data):
-    user = User.create_user(**user_data)
+@pytest.fixture
+def user(db, User, user_data):
+    seed('')
+    return User.create_user(**user_data)
+
+
+def test_create_inactive_user(user, User):
     assert isinstance(user, User)
     assert not user.is_active
+    assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
 
 
-def test_generate_activation_key(db, User, user_data):
-    seed('')
-    user = User.create_user(**user_data)
-    key = user.get_activation_key()
-    assert key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
+def test_user_activate(user):
+    user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
+    assert user.is_active
+    assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
+
+
+def test_user_activate_fail():
+    pass
+
+
+def test_user_already_activated():
+    pass
+
+
+def test_user_deactivate():
+    pass
