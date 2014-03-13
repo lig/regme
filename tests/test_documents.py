@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from random import seed
 
 from django.conf import settings
@@ -18,6 +19,7 @@ def django_settings():
         AUTHENTICATION_BACKENDS=(
             'mongoengine.django.auth.MongoEngineBackend',),
         MONGOENGINE_USER_DOCUMENT='regme.documents.User',
+        ACCOUNT_ACTIVATION_DAYS=7,
     )
 
 
@@ -66,3 +68,17 @@ def test_user_activate_fail(user):
     user.activate('')
     assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
     assert not user.is_active
+
+
+def test_user_activation_expired(user):
+    user.activation_due = datetime.utcnow() - timedelta(days=1)
+    user.save()
+    user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
+    assert not user.is_active
+
+
+def test_user_activation_due(user):
+    now = datetime.utcnow()
+    activation_due_gt = now + timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
+    activation_due_lt = activation_due_gt - timedelta(days=1)
+    assert activation_due_lt < user.activation_due < activation_due_gt
