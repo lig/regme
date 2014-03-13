@@ -24,14 +24,13 @@ class User(BaseUser):
     def deactivate(self, save=True):
         self.is_active = False
         self.activation_key = self.make_key()
-
         if save:
             self.save()
 
-    def activate(self, save=True):
-        self.is_active = True
-
-        if save:
-            self.save()
+    def activate(self, activation_key, save=True):
+        if self.activation_key == activation_key:
+            self.is_active = True
+            if save:
+                self.save()
 
 pre_save.connect(User.ensure_inactive, User)

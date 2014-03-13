@@ -60,8 +60,10 @@ def test_user_activate(user):
     assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
 
 
-def test_user_activate_fail():
-    pass
+def test_user_activate_fail(user):
+    user.activate('')
+    assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
+    assert not user.is_active
 
 
 def test_user_already_activated():
