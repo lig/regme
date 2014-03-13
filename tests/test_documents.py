@@ -54,21 +54,15 @@ def test_create_inactive_user(user, User):
     assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
 
 
-def test_user_activate(user):
+def test_user_activate_deactivate(user):
     user.activate('516bb9061d58280acd0c3900e18feaf5166f02ff')
     assert user.is_active
     assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
+    user.deactivate()
+    assert not user.is_active
 
 
 def test_user_activate_fail(user):
     user.activate('')
     assert user.activation_key == '516bb9061d58280acd0c3900e18feaf5166f02ff'
     assert not user.is_active
-
-
-def test_user_already_activated():
-    pass
-
-
-def test_user_deactivate():
-    pass
