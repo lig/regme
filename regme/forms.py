@@ -63,3 +63,43 @@ class UserCreationForm(forms.Form):
             email=self.cleaned_data['email'],
             password=self.cleaned_data["password1"])
         return user
+
+
+class UserActivationForm(forms.Form):
+
+    user = None
+    error_messages = {
+        'wrong_activation_key': _("Wrong activation key."),
+        'user_already_activated': _("User already activated."),
+    }
+    username = forms.CharField(label=_("Username"), max_length=30)
+    activation_key = forms.CharField(label=_("Activation key"))
+
+    def clean(self):
+
+        if self.cleaned_data.keys() == {'username', 'activation_key'}:
+
+            try:
+                user = User._default_manager.get(
+                    username=self.cleaned_data['username'])
+            except User.DoesNotExist:
+                raise forms.ValidationError(
+                    self.error_messages['wrong_activation_key'],
+                    code='wrong_activation_key')
+
+            if user.activate(self.cleaned_data['activation_key'], save=False):
+                self.user = user
+            elif user.is_active:
+                raise forms.ValidationError(
+                    self.error_messages['user_already_activated'],
+                    code='user_already_activated')
+            else:
+                raise forms.ValidationError(
+                    self.error_messages['wrong_activation_key'],
+                    code='wrong_activation_key')
+
+    def save(self):
+
+        if self.user:
+            self.user.save()
+            return self.user
