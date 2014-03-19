@@ -1,6 +1,8 @@
+from os import path
 import sys
 
 from django.conf import settings
+import django
 import pytest
 
 
@@ -22,4 +24,13 @@ def django_settings():
         MONGOENGINE_USER_DOCUMENT='regme.documents.User',
         ACCOUNT_ACTIVATION_DAYS=7,
         DATABASES={'default': {'ENGINE': 'django.db.backends.dummy'}},
+        EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+        TEMPLATE_DIRS=(
+            path.join(
+                path.dirname(django.__file__),
+                'contrib', 'auth', 'tests', 'templates'),
+        ),
+        TEMPLATE_LOADERS=(
+            'django.template.loaders.filesystem.Loader',
+        ),
     )

@@ -32,6 +32,12 @@ def user(db, User, user_data):
     return User.create_user(**user_data)
 
 
+@pytest.fixture
+def active_user(user):
+    user.activate(user.activation_key)
+    return user
+
+
 def test_user_creation_form(user_data, db):
     from regme.forms import UserCreationForm
     form = UserCreationForm({
@@ -100,9 +106,9 @@ def test_user_activation_form_empty_activation_key(user_data, user):
     assert form.save() is None
 
 
-def test_user_activation_form_already_activated(user_data, user):
+def test_user_activation_form_already_activated(user_data, active_user):
+    user = active_user
     from regme.forms import UserActivationForm
-    user.activate(user.activation_key)
     form = UserActivationForm({
         'username': user.username,
         'activation_key': user.activation_key,
@@ -110,3 +116,13 @@ def test_user_activation_form_already_activated(user_data, user):
     assert not bool(form.is_valid())
     assert form.user is None
     assert form.save() is None
+
+
+def test_password_recovery_form(active_user):
+    user = active_user
+    from django.contrib.auth.forms import PasswordResetForm
+    from django.core import mail
+    form = PasswordResetForm({'email': user.email})
+    assert bool(form.is_valid())
+    form.save(domain_override='localhost')
+    assert len(mail.outbox) == 1

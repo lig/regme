@@ -47,4 +47,10 @@ class User(BaseUser):
             self.save()
         return True
 
+    def has_usable_password(self):
+        """Dummy method for django.contrib.auth.forms.PasswordResetForm
+        compatibility
+        """
+        return True
+
 pre_save.connect(User.ensure_inactive, User)
