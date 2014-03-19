@@ -126,3 +126,16 @@ def test_password_recovery_form(active_user):
     assert bool(form.is_valid())
     form.save(domain_override='localhost')
     assert len(mail.outbox) == 1
+
+
+def test_password_change_form(user_data, active_user):
+    user = active_user
+    from django.contrib.auth.forms import PasswordChangeForm
+    form = PasswordChangeForm(user, {
+        'old_password': user_data['password'],
+        'new_password1': 'new_password',
+        'new_password2': 'new_password',
+    })
+    assert bool(form.is_valid())
+    user = form.save()
+    assert user.check_password('new_password')
