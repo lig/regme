@@ -44,3 +44,10 @@ Installation
 
 `pip install regme`
 
+
+Configuration
+-------------
+
+The only additional setting regme requires is `ACCOUNT_ACTIVATION_DAYS`. You must provide this setting in your `settings.py` file. This setting defines for how long user activation token should be considered as valid. Recomended value is `7`, e.g.:
+
+    ACCOUNT_ACTIVATION_DAYS = 7
