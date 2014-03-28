@@ -122,6 +122,7 @@ def test_password_recovery_form(active_user):
     user = active_user
     from django.contrib.auth.forms import PasswordResetForm
     from django.core import mail
+    mail.outbox = []
     form = PasswordResetForm({'email': user.email})
     assert bool(form.is_valid())
     form.save(domain_override='localhost')

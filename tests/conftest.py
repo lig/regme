@@ -5,7 +5,6 @@ from django.conf import settings
 import django
 import pytest
 
-
 sys.path[0:0] = ['']
 
 
@@ -23,6 +22,7 @@ def django_settings():
             'mongoengine.django.auth.MongoEngineBackend',),
         MONGOENGINE_USER_DOCUMENT='regme.documents.User',
         ACCOUNT_ACTIVATION_DAYS=7,
+        SITE={'domain': 'localhost:8000', 'name': 'Lnkfy'},
         DATABASES={'default': {'ENGINE': 'django.db.backends.dummy'}},
         EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
         TEMPLATE_DIRS=(
@@ -30,7 +30,5 @@ def django_settings():
                 path.dirname(django.__file__),
                 'contrib', 'auth', 'tests', 'templates'),
         ),
-        TEMPLATE_LOADERS=(
-            'django.template.loaders.filesystem.Loader',
-        ),
+        ROOT_URLCONF='regme.urls',
     )
