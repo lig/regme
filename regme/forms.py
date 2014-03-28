@@ -72,8 +72,10 @@ class UserActivationForm(forms.Form):
         'wrong_activation_key': _("Wrong activation key."),
         'user_already_activated': _("User already activated."),
     }
-    username = forms.CharField(label=_("Username"), max_length=30)
-    activation_key = forms.CharField(label=_("Activation key"))
+    username = forms.CharField(label=_("Username"), max_length=30,
+        widget=forms.HiddenInput)
+    activation_key = forms.CharField(label=_("Activation key"),
+        widget=forms.HiddenInput)
 
     def clean(self):
 

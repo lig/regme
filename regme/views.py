@@ -39,8 +39,8 @@ class ActivateView(FormView):
         else:
             return self.form_invalid(form)
 
-    def _allowed_methods(self):
-        return ['GET']
+    def post(self, request, *args, **kwargs):
+        return self.http_method_not_allowed(request, *args, **kwargs)
 
 activate = ActivateView.as_view()
 
