@@ -25,6 +25,9 @@ setup(
     ],
     keywords='mongodb mongoengine django registration authentication',
     packages=['regme'],
+    package_data={'regme': [
+        'templates/registration/*.html',
+        'templates/registration/email/*.txt']},
     install_requires=[
         'django',
         'mongoengine',
