@@ -1,0 +1,11 @@
+{% load i18n %}
+{% url 'activate' username=user.username activation_key=user.activation_key as activate_url %}
+{% blocktrans with user_name=user.get_full_name site_name=site.name site_domain=site.domain %}
+
+Hello {{ user_name }}
+
+To activate your {{ site_name }} account follow the link:
+
+http://{{ site_domain }}{{ activate_url }}
+
+{% endblocktrans %}

@@ -3,6 +3,8 @@ from hashlib import sha1
 from random import random
 
 from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from mongoengine import StringField, DateTimeField
 from mongoengine.django.auth import User as BaseUser
 from mongoengine.signals import pre_save
@@ -23,14 +25,29 @@ class User(BaseUser):
     def make_key():
         return sha1((settings.SECRET_KEY + str(random())).encode()).hexdigest()
 
-    def deactivate(self, save=True):
+    def deactivate(self, save=True, notify=True):
         self.is_active = False
         self.activation_key = self.make_key()
         self.activation_due = (
             datetime.utcnow() + timedelta(
                 days=settings.ACCOUNT_ACTIVATION_DAYS))
+
         if save:
             self.save()
+
+        if notify:
+            c = {
+                'site': settings.SITE,
+                'user': self,
+            }
+            subject = render_to_string(
+                'registration/email/activate_subject.txt', c)
+            # Email subject *must not* contain newlines
+            subject = ''.join(subject.splitlines())
+            email = render_to_string(
+                'registration/email/activate_email.txt', c)
+            send_mail(subject, email, None, [self.email])
+
         return True
 
     def activate(self, activation_key, save=True):

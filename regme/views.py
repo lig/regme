@@ -31,6 +31,17 @@ class ActivateView(FormView):
         form.save()
         return FormView.form_valid(self, form)
 
+    def get(self, request, *args, **kwargs):
+        form = self.get_form_class()(kwargs)
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def _allowed_methods(self):
+        return ['GET']
+
 activate = ActivateView.as_view()
 
 
