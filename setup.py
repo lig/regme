@@ -8,7 +8,7 @@ with codecs.open('README.md', encoding='utf-8') as f:
 
 setup(
     name='regme',
-    version='0.2.4',
+    version='0.2.5',
     description='User registration and management library using MongoEngine',
     long_description=long_description,
     url='https://github.com/lig/regme',
