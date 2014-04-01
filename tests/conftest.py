@@ -5,6 +5,7 @@ from django.conf import settings
 import django
 import pytest
 
+
 sys.path[0:0] = ['']
 
 

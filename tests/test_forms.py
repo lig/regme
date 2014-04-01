@@ -1,4 +1,5 @@
 from random import seed
+from urllib.parse import urlsplit
 
 from mongoengine import connect
 import pytest
@@ -122,11 +123,17 @@ def test_password_recovery_form(active_user):
     user = active_user
     from django.contrib.auth.forms import PasswordResetForm
     from django.core import mail
+    from django.test.client import Client
+    c = Client()
     mail.outbox = []
     form = PasswordResetForm({'email': user.email})
     assert bool(form.is_valid())
     form.save(domain_override='localhost')
     assert len(mail.outbox) == 1
+    reset_path = urlsplit(mail.outbox[0].body.strip()).path
+    reset_response = c.get(reset_path)
+    assert reset_response.status_code == 200
+    assert not reset_response.content
 
 
 def test_password_change_form(user_data, active_user):
