@@ -52,6 +52,9 @@ In addition to [MongoEngine Django support settings](http://docs.mongoengine.org
         'regme',
         # …
     )
+    
+    # Site information (domain and name) for use in activation mail messages
+    SITE = {'domain': 'domain.tld', 'name': 'Site Name'}
 
 
 Usage
